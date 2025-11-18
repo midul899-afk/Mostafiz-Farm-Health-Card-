@@ -1,0 +1,21 @@
+{
+  "name": "Mostafiz Farm Health Card",
+  "short_name": "Farm Health",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f9fb",
+  "theme_color": "#38a169",
+  "description": "আপনার গবাদি পশুর ডিজিটাল স্বাস্থ্য রেকর্ড",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

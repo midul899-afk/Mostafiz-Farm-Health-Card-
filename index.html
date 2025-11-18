@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostafiz Farm Health Card</title>
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#38a169">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'farm-green': '#38a169',
+                        'farm-light': '#edf8f2',
+                        'farm-dark': '#2f855a',
+                        'farm-orange': '#f6ad55',
+                        'farm-red': '#ef4444',
+                        'farm-blue': '#4c51bf', 
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for the farm theme */
+        body {
+            background-color: #f7f9fb;
+            font-family: 'Inter', sans-serif;
+        }
+        .container-card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="p-4 pb-20 sm:p-6 bg-farm-light min-h-screen"> 
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-4 bg-farm-green text-white p-6 rounded-xl container-card">
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                Mostafiz Farm Health Card
+            </h1>
+            <p class="text-sm opacity-90 mt-1">আপনার গবাদি পশুর ডিজিটাল স্বাস্থ্য রেকর্ড</p>
+        </header>
+
+        <section id="dashboard-view" class="mb-6 p-4 bg-white rounded-xl container-card">
+            <h2 class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">📊 ফার্ম ওভারভিউ</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-stats-container">
+                
+                <div class="bg-gray-100 p-3 rounded-lg border-b-4 border-farm-dark shadow-sm text-center">
+                    <p class="text-xs font-medium text-gray-500">মোট রেকর্ড</p>
+                    <p id="stat-total-records" class="text-2xl font-bold text-farm-dark mt-1">0</p>
+                </div>
+                
+                <div id="dashboard-unique-animals" class="bg-gray-100 p-3 rounded-lg border-b-4 border-farm-blue shadow-sm text-center cursor-pointer hover:bg-gray-200 transition">
+                    <p class="text-xs font-medium text-gray-500">মোট পশু (Unique)</p>
+                    <p id="stat-total-animals" class="text-2xl font-bold text-farm-blue mt-1">0</p>
+                </div>
+                
+                <div id="dashboard-today-entries" class="bg-gray-100 p-3 rounded-lg border-b-4 border-farm-orange shadow-sm text-center cursor-pointer hover:bg-gray-200 transition">
+                    <p class="text-xs font-medium text-gray-500">আজকের এন্ট্রি</p>
+                    <p id="stat-today-entries" class="text-2xl font-bold text-farm-orange mt-1">0</p>
+                </div>
+
+                <div class="bg-gray-100 p-3 rounded-lg border-b-4 border-farm-green shadow-sm text-center">
+                    <p class="text-xs font-medium text-gray-500">সর্বশেষ এন্ট্রি</p>
+                    <p id="stat-last-entry-date" class="text-sm font-bold text-farm-green mt-2 truncate">N/A</p>
+                </div>
+
+            </div>
+            
+            <h3 class="text-xl font-semibold text-farm-red mt-6 mb-3 border-b pb-2">🚨 বিশেষ মনোযোগ প্রয়োজন</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-red-50 p-3 rounded-lg border-l-4 border-farm-red shadow-sm">
+                    <p class="text-xs font-medium text-gray-700">সর্বাধিক চিকিৎসা (Total Records)</p>
+                    <p id="stat-most-treated-animal" class="text-sm font-bold text-farm-red mt-1 truncate">N/A</p>
+                </div>
+                <div class="bg-yellow-50 p-3 rounded-lg border-l-4 border-farm-orange shadow-sm">
+                    <p class="text-xs font-medium text-gray-700">গত ৩০ দিনে প্রধান রোগ</p>
+                    <p id="stat-top-disease-30d" class="text-sm font-bold text-farm-orange mt-1 truncate">N/A</p>
+                </div>
+            </div>
+            </section>
+        
+        <div id="data-management" class="mb-8 p-4 bg-white rounded-xl container-card hidden"> 
+            <h2 class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">ডেটা ম্যানেজমেন্ট (ব্যাকআপ ও পুনরুদ্ধার)</h2>
+            <div id="message-box" class="mt-3 p-3 text-sm rounded-md hidden"></div>
+            
+            <p class="text-sm text-gray-600 mb-4">আপনার রেকর্ড সুরক্ষিত রাখতে ডেটা রপ্তানি করুন, অথবা বিদ্যমান ডেটা প্রতিস্থাপন করতে একটি ফাইল (JSON/CSV) আমদানি করুন।</p>
+
+            <div class="flex flex-col space-y-4">
+                <div class="border p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold text-lg text-farm-dark mb-3 border-b pb-2">ডেটা রপ্তানি (Export)</h3>
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                        <button id="export-csv-button" class="w-full sm:w-1/2 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-orange hover:bg-orange-600 transition duration-150 ease-in-out">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            রেকর্ড রপ্তানি (CSV)
+                        </button>
+                        <button id="export-json-button" class="w-full sm:w-1/2 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-dark hover:bg-farm-green transition duration-150 ease-in-out">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            রেকর্ড রপ্তানি (JSON)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border p-4 rounded-lg bg-gray-50">
+                    <h3 class="font-semibold text-lg text-farm-dark mb-3 border-b pb-2">ডেটা আমদানি (Import - সব ডেটা মুছে যাবে)</h3>
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                        <button id="import-json-button" class="w-full sm:w-1/2 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-dark hover:bg-farm-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-farm-dark transition duration-150 ease-in-out">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v4a1 1 0 001 1h6a1 1 0 001-1V7m-5 9h-2M9 11l-3 3m0 0l-3-3m3 3V3"></path></svg>
+                            রেকর্ড আমদানি (JSON)
+                        </button>
+                        <button id="import-csv-button" class="w-full sm:w-1/2 inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-orange hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-farm-orange transition duration-150 ease-in-out">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v4a1 1 0 001 1h6a1 1 0 001-1V7m-5 9h-2M9 11l-3 3m0 0l-3-3m3 3V3"></path></svg>
+                            রেকর্ড আমদানি (CSV)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border p-4 rounded-lg bg-red-50 border-red-200 mt-4">
+                    <h3 class="font-semibold text-lg text-farm-red mb-3 border-b pb-2">⚠️ সমস্ত ডেটা মুছুন (Permanent Delete)</h3>
+                    <p class="text-sm text-gray-700 mb-4">এই অ্যাকশনটি **অপরিবর্তনীয়**। আপনার সেভ করা সব পশুর স্বাস্থ্য রেকর্ড, চিরতরে ডিলিট হয়ে যাবে।</p>
+                    <button id="delete-all-button" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-red hover:bg-red-700 transition duration-150 ease-in-out">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        সব রেকর্ড চিরতরে মুছুন
+                    </button>
+                </div>
+                <input type="file" id="file-input" accept=".json,.csv" class="hidden" />
+            </div>
+        </div>
+
+
+        <section id="add-record" class="mb-8 p-6 bg-white rounded-xl container-card hidden">
+            <h2 class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">নতুন স্বাস্থ্য রেকর্ড যোগ করুন</h2>
+            <form id="health-record-form" class="space-y-4">
+
+                <div>
+                    <label for="animal-id" class="block text-sm font-medium text-gray-700">পশুর আইডি নম্বর (Animal ID)</label>
+                    <input type="text" id="animal-id" required 
+                           inputmode="numeric" pattern="[0-9]+"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm" 
+                           placeholder="যেমন: 101, 2504" 
+                           title="শুধুমাত্র সংখ্যাসূচক আইডি হতে হবে।">
+                </div>
+                
+                <div>
+                    <label for="line-number" class="block text-sm font-medium text-gray-700">লাইন নম্বর (Line Number)</label>
+                    <input type="text" id="line-number" required 
+                           inputmode="numeric" pattern="[0-9]+"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm" 
+                           placeholder="যেমন: 1, 2, 3" 
+                           title="শুধুমাত্র সংখ্যাসূচক লাইন নম্বর হতে হবে।">
+                </div>
+
+                <div>
+                    <label for="checkup-date" class="block text-sm font-medium text-gray-700">পরীক্ষার তারিখ (Date of Checkup)</label>
+                    <input type="date" id="checkup-date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm">
+                </div>
+                
+                <div>
+                    <label for="disease-name" class="block text-sm font-medium text-gray-700">রোগের নাম (Disease / Ailment Name)</label>
+                    <input list="common-diseases" id="disease-name" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm"
+                        placeholder="রোগের নাম নির্বাচন করুন বা লিখুন।">
+                    
+                    <datalist id="common-diseases">
+                        <option value="Pneumonia">
+                        <option value="Enteritis">
+                        <option value="Arthritis">
+                        <option value="Pink eye">
+                        <option value="Abscess">
+                        <option value="Anorexia">
+                        <option value="Anthrax">
+                        <option value="Bloat/Tympany">
+                        <option value="Calf Scour (Diarrhea)">
+                        <option value="Conjunctivitis">
+                        <option value="Constipation">
+                        <option value="Debility">
+                        <option value="Foot-and-Mouth Disease (FMD)">
+                        <option value="Lameness">
+                        <option value="Death">
+                    </datalist>
+                </div>
+
+                <div>
+                    <label for="treatment" class="block text-sm font-medium text-gray-700">চিকিৎসা / ঔষধ (Treatment / Medication)</label>
+                    <textarea id="treatment" rows="3" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm" placeholder="দেওয়া ঔষধ, ডোজ, এবং ফলো-আপ প্ল্যান।"></textarea>
+                </div>
+
+                <button type="submit" id="save-button" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-dark hover:bg-farm-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-farm-dark transition duration-150 ease-in-out">
+                    রেকর্ড সংরক্ষণ করুন
+                </button>
+            </form>
+        </section>
+
+        <section id="home-search-view" class="p-6 bg-white rounded-xl container-card">
+            <h2 id="search-list-title" class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">পশু আইডি দিয়ে রেকর্ড সার্চ করুন</h2>
+            
+            <div class="mb-4">
+                <label for="search-input" class="sr-only">পশুর আইডি দিয়ে সার্চ করুন</label>
+                <div class="relative flex items-center">
+                    <input type="text" id="search-input" placeholder="সম্পূর্ণ পশুর আইডি নম্বর লিখুন..." 
+                           inputmode="numeric" pattern="[0-9]*"
+                           class="block w-full pr-4 py-2 border border-gray-300 rounded-lg shadow-inner focus:ring-farm-green focus:border-farm-green transition sm:text-sm">
+                </div>
+            </div>
+
+            <button id="search-action-button" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-orange hover:bg-orange-600 transition duration-150 ease-in-out">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                সার্চ করুন (Search)
+            </button>
+            
+            <p class="text-xs text-gray-500 mt-4 text-center">অনুসন্ধানের জন্য শুধুমাত্র সম্পূর্ণ আইডি নম্বর লিখুন।</p>
+        </section>
+
+
+        <section id="search-results-view" class="p-6 bg-white rounded-xl container-card hidden">
+            <button id="back-to-home-from-search" class="flex items-center text-farm-dark hover:text-farm-green mb-4 text-sm font-medium transition duration-150">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                হোম স্ক্রিনে ফিরে যান
+            </button>
+            
+            <h2 id="search-results-title" class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">অনুসন্ধানের ফলাফল</h2>
+            <p id="search-query-display" class="text-sm text-gray-600 mb-4 font-medium"></p>
+
+
+            <div id="records-container" class="space-y-4">
+                <div id="empty-state" class="text-gray-500 text-center p-4 hidden">
+                    <p class="text-lg font-semibold mb-3 text-farm-red">এই আইডি-তে কোনো রেকর্ড মেলেনি।</p>
+                    <button id="add-first-record-button" class="w-full inline-flex items-center justify-center py-3 px-4 border border-transparent shadow-md text-base font-medium rounded-md text-white bg-farm-green hover:bg-farm-dark transition duration-150 ease-in-out" 
+                    data-animal-id="">
+                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        এই আইডির জন্য প্রথম রেকর্ড যোগ করুন
+                    </button>
+                    <p class="text-xs text-gray-500 mt-3">নতুন রেকর্ড যোগ করতে উপরের বাটনে ক্লিক করুন।</p>
+                </div>
+            </div>
+            
+        </section>
+
+
+        <section id="today-records-view" class="p-6 bg-white rounded-xl container-card hidden">
+            <button id="back-to-home-from-today" class="flex items-center text-farm-dark hover:text-farm-green mb-4 text-sm font-medium transition duration-150">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                হোম স্ক্রিনে ফিরে যান
+            </button>
+            
+            <h2 class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">📅 আজকের নতুন এন্ট্রি</h2>
+            <p id="today-count-display" class="text-sm text-gray-600 mb-4 font-medium"></p>
+
+            <div id="today-records-container" class="space-y-4 bg-gray-50 p-2 rounded-lg">
+                </div>
+        </section>
+
+
+        <section id="detailed-history-view" class="p-6 bg-white rounded-xl container-card hidden">
+            <button id="back-to-list-button" class="flex items-center text-farm-dark hover:text-farm-green mb-4 text-sm font-medium transition duration-150">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                ফলাফল / হোম স্ক্রিনে ফিরে যান
+            </button>
+            
+            <h2 id="detailed-history-title" class="text-2xl font-bold text-farm-red mb-4 border-b pb-2"></h2>
+            
+            <button id="add-medicine-for-this-animal" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-green hover:bg-farm-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-farm-dark transition duration-150 ease-in-out mb-6">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                এই পশুর জন্য নতুন স্বাস্থ্য রেকর্ড যোগ করুন
+            </button>
+
+            <div id="detailed-records-container" class="space-y-1 bg-gray-50 p-2 rounded-lg">
+                </div>
+        </section>
+        
+        <section id="unique-animals-view" class="p-6 bg-white rounded-xl container-card hidden">
+            <button id="back-to-home-from-unique" class="flex items-center text-farm-dark hover:text-farm-green mb-4 text-sm font-medium transition duration-150">
+                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                হোম স্ক্রিনে ফিরে যান
+            </button>
+            
+            <h2 class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">🐑 মোট ইউনিক পশুর তালিকা</h2>
+            <p id="unique-count-display" class="text-sm text-gray-600 mb-4 font-medium"></p>
+
+            <div id="unique-animals-container" class="space-y-4">
+                </div>
+        </section>
+        </div>
+    
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-farm-dark shadow-2xl border-t border-farm-green sm:hidden">
+        <div class="max-w-4xl mx-auto flex justify-around items-center h-16">
+            
+            <button id="nav-home" class="flex flex-col items-center text-xs font-medium text-white opacity-90 hover:opacity-100 transition duration-150 p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                সার্চ
+            </button>
+
+            <button id="nav-new-entry" class="flex flex-col items-center text-xs font-medium text-white opacity-90 hover:opacity-100 transition duration-150 p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                নতুন এন্ট্রি
+            </button>
+
+            <button id="nav-today-entries" class="flex flex-col items-center text-xs font-medium text-white p-2">
+                <span id="today-entries-count-nav" class="text-lg font-bold text-farm-orange">0</span>
+                <span class="text-xs">আজকের এন্ট্রি</span>
+            </button>
+
+            <button id="nav-backup" class="flex flex-col items-center text-xs font-medium text-white opacity-90 hover:opacity-100 transition duration-150 p-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                ব্যাকআপ
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // Dhap 2: Service Worker Registration Added
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('SW registered:', registration);
+                }).catch(error => {
+                    console.error('SW registration failed:', error);
+                });
+            });
+        }
+        
+        const STORAGE_KEY = 'mostafizFarmHealthRecords';
+        const form = document.getElementById('health-record-form');
+        const recordsContainer = document.getElementById('records-container');
+        const emptyState = document.getElementById('empty-state');
+        const saveButton = document.getElementById('save-button');
+        const messageBox = document.getElementById('message-box');
+        
+        const todayEntriesCountElementNav = document.getElementById('today-entries-count-nav'); 
+        
+        // Dashboard Elements
+        const statTotalRecords = document.getElementById('stat-total-records');
+        const statTotalAnimals = document.getElementById('stat-total-animals');
+        const statTodayEntries = document.getElementById('stat-today-entries');
+        const statLastEntryDate = document.getElementById('stat-last-entry-date');
+        const dashboardTodayEntriesButton = document.getElementById('dashboard-today-entries');
+        const dashboardUniqueAnimalsButton = document.getElementById('dashboard-unique-animals'); 
+        
+        // Quick Stats Elements
+        const statMostTreatedAnimal = document.getElementById('stat-most-treated-animal');
+        const statTopDisease30d = document.getElementById('stat-top-disease-30d');
+
+
+        // Today's Entries View Elements
+        const todayRecordsView = document.getElementById('today-records-view');
+        const todayRecordsContainer = document.getElementById('today-records-container');
+        const todayCountDisplay = document.getElementById('today-count-display');
+        const backToHomeFromToday = document.getElementById('back-to-home-from-today');
+        
+        // Export/Import Elements
+        const exportCsvButton = document.getElementById('export-csv-button');
+        const exportJsonButton = document.getElementById('export-json-button');
+        const importJsonButton = document.getElementById('import-json-button');
+        const importCsvButton = document.getElementById('import-csv-button');
+        const fileInput = document.getElementById('file-input');
+        
+        // Delete All Button
+        const deleteAllButton = document.getElementById('delete-all-button'); // NEW
+
+        // Search Elements
+        const searchInput = document.getElementById('search-input'); 
+        const searchActionButton = document.getElementById('search-action-button');
+        const searchResultsView = document.getElementById('search-results-view'); 
+        const searchResultsTitle = document.getElementById('search-results-title'); 
+        const searchQueryDisplay = document.getElementById('search-query-display'); 
+        const backToHomeFromSearchButton = document.getElementById('back-to-home-from-search'); 
+        const addFirstRecordButton = document.getElementById('add-first-record-button');
+
+        // Navigation targets
+        const dashboardView = document.getElementById('dashboard-view'); 
+        const dataManagementSection = document.getElementById('data-management');
+        const addRecordSection = document.getElementById('add-record');
+        const homeSearchView = document.getElementById('home-search-view'); 
+        const detailedHistoryView = document.getElementById('detailed-history-view');
+        const detailedRecordsContainer = document.getElementById('detailed-records-container');
+        const detailedHistoryTitle = document.getElementById('detailed-history-title');
+        const backToListButton = document.getElementById('back-to-list-button');
+        const addMedicineForThisAnimalButton = document.getElementById('add-medicine-for-this-animal');
+        
+        // Unique Animals View Elements
+        const uniqueAnimalsView = document.getElementById('unique-animals-view');
+        const uniqueAnimalsContainer = document.getElementById('unique-animals-container');
+        const uniqueCountDisplay = document.getElementById('unique-count-display');
+        const backToHomeFromUnique = document.getElementById('back-to-home-from-unique');
+
+
+        // Nav Buttons
+        const navHome = document.getElementById('nav-home');
+        const navNewEntry = document.getElementById('nav-new-entry');
+        const navBackup = document.getElementById('nav-backup');
+        const navTodayEntries = document.getElementById('nav-today-entries');
+
+        // --- Core Functions ---
+
+        const loadRecords = () => {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : [];
+        };
+
+        const saveRecords = (records) => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+            updateTodayEntriesCount(); 
+            renderDashboard(); 
+        };
+        
+        const showMessage = (message, type = 'success') => {
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-red-100', 'border-red-400', 'text-red-700', 'bg-green-100', 'border-green-400', 'text-green-700');
+            
+            if (type === 'error') {
+                messageBox.classList.add('bg-red-100', 'border-red-400', 'text-red-700', 'border');
+            } else {
+                messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700', 'border');
+            }
+
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000);
+        };
+        
+        // Function to calculate repeated diseases in last X days
+        const calculateTopDiseases = (records, days = 30) => {
+            const today = new Date();
+            const cutoffDate = new Date(today);
+            cutoffDate.setDate(today.getDate() - days);
+
+            const diseaseCounts = {};
+
+            records.forEach(record => {
+                const recordDate = new Date(record.date);
+                
+                if (recordDate >= cutoffDate) {
+                    const disease = record.disease.trim();
+                    diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1;
+                }
+            });
+
+            const sortedDiseases = Object.entries(diseaseCounts)
+                .sort(([, countA], [, countB]) => countB - countA)
+                .slice(0, 1); 
+
+            if (sortedDiseases.length > 0) {
+                return `${sortedDiseases[0][0]} (${sortedDiseases[0][1]} বার)`;
+            }
+            return '৩০ দিনে কোনো রোগ নেই';
+        };
+
+        // Function to calculate most treated animal
+        const calculateMostTreatedAnimal = (records) => {
+            const animalCounts = {};
+
+            records.forEach(record => {
+                const key = `${record.animalId} (লাইন: ${record.lineNumber})`;
+                animalCounts[key] = (animalCounts[key] || 0) + 1;
+            });
+
+            const mostTreated = Object.entries(animalCounts)
+                .sort(([, countA], [, countB]) => countB - countA);
+
+            if (mostTreated.length > 0) {
+                return `${mostTreated[0][0]}: ${mostTreated[0][1]} টি রেকর্ড`;
+            }
+            return 'N/A';
+        };
+        
+        // --- Dashboard Rendering Function ---
+        const renderDashboard = () => {
+            const records = loadRecords();
+            const todayRecords = getTodayRecords(records); 
+
+            // 1. Total Records
+            statTotalRecords.textContent = records.length;
+
+            // 2. Total Unique Animals
+            const uniqueAnimalIds = new Set(records.map(record => `${record.animalId}-${record.lineNumber}`));
+            statTotalAnimals.textContent = uniqueAnimalIds.size;
+
+            // 3. Today's Entries
+            statTodayEntries.textContent = todayRecords.length;
+            todayEntriesCountElementNav.textContent = todayRecords.length;
+            
+            // 4. Last Entry Date/Time
+            if (records.length > 0) {
+                const newestRecord = records.reduce((latest, current) => {
+                    return (new Date(current.timestamp) > new Date(latest.timestamp)) ? current : latest;
+                }, records[0]); 
+
+                const fullDate = new Date(newestRecord.timestamp);
+                const datePart = newestRecord.date; 
+                const timePart = fullDate.toLocaleTimeString('bn-BD', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                
+                statLastEntryDate.textContent = `${datePart} ${timePart}`;
+            } else {
+                statLastEntryDate.textContent = 'N/A';
+            }
+            
+            // 5-6. Quick Stats
+            if (records.length > 0) {
+                statMostTreatedAnimal.textContent = calculateMostTreatedAnimal(records);
+                statTopDisease30d.textContent = calculateTopDiseases(records, 30);
+            } else {
+                statMostTreatedAnimal.textContent = 'N/A';
+                statTopDisease30d.textContent = '৩০ দিনে কোনো রোগ নেই';
+            }
+        };
+
+        // --- Calculate and Display Today's Entries Count ---
+        const getTodayRecords = (records = loadRecords()) => {
+            const today = new Date().toISOString().split('T')[0]; 
+            
+            return records
+                .filter(record => record.date === today) 
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
+        };
+        
+        const updateTodayEntriesCount = () => {
+            renderDashboard();
+        };
+        
+        dashboardTodayEntriesButton.addEventListener('click', () => {
+             displayTodayEntries();
+        });
+        
+        // Dashboard Unique Animals Button Listener
+        dashboardUniqueAnimalsButton.addEventListener('click', () => {
+            displayUniqueAnimals();
+        });
+
+
+        // --- Display Today's Entries in a detailed list ---
+        const displayTodayEntries = () => {
+            const todayRecords = getTodayRecords(); 
+            
+            switchView('today-records-view');
+            todayRecordsContainer.innerHTML = ''; 
+            todayCountDisplay.textContent = `আজ মোট ${todayRecords.length} টি এন্ট্রি যোগ করা হয়েছে।`;
+
+            if (todayRecords.length === 0) {
+                todayRecordsContainer.innerHTML = '<p class="text-center text-gray-500 p-4">আজ কোনো নতুন এন্ট্রি নেই।</p>';
+                return;
+            }
+
+            todayRecords.forEach(record => {
+                const recordDiv = document.createElement('div');
+                recordDiv.className = 'p-3 border-b border-gray-200 bg-white rounded-md mb-2 shadow-sm'; 
+                
+                const fullDate = new Date(record.timestamp);
+                const timePart = fullDate.toLocaleTimeString('bn-BD', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+
+                const treatmentDetails = record.treatment;
+
+                recordDiv.innerHTML = `
+                    <div class="flex justify-between items-center cursor-pointer toggle-details" data-id="${record.id}">
+                        <p class="text-sm font-semibold text-farm-dark">
+                            Animal ID: ${record.animalId} | লাইন ${record.lineNumber} | ${timePart} | <span class="text-farm-red font-bold">${record.disease}</span>
+                        </p>
+                        <svg class="w-4 h-4 text-farm-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+
+                    <div id="details-${record.id}" class="hidden mt-2 p-3 bg-gray-50 border-l-4 border-farm-orange">
+                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${record.disease}</span></p>
+                        <p class="text-xs font-medium text-gray-700 mt-1">পূর্ণ চিকিৎসা: <span class="italic">${treatmentDetails.replace(/\n/g, '<br>')}</span></p>
+                         <div class="flex justify-between items-center mt-3">
+                            <p class="text-xs text-gray-400 italic">রেকর্ড ID: ${record.id}</p>
+                            <button class="delete-record-button text-farm-red hover:text-red-700 text-xs font-medium transition" data-id="${record.id}" data-view="today">
+                                মুছে ফেলুন
+                            </button>
+                        </div>
+                    </div>
+                `;
+                todayRecordsContainer.appendChild(recordDiv);
+            });
+            
+            // Add event listeners for today records view
+            document.querySelectorAll('#today-records-container .toggle-details').forEach(element => {
+                element.addEventListener('click', (e) => {
+                    const recordId = e.currentTarget.dataset.id;
+                    const detailsDiv = document.getElementById(`details-${recordId}`);
+                    const svgIcon = e.currentTarget.querySelector('svg');
+                    
+                    if (detailsDiv.classList.contains('hidden')) {
+                        document.querySelectorAll('#today-records-container .details-open').forEach(openDiv => {
+                            if (openDiv.id !== `details-${recordId}`) {
+                                openDiv.classList.add('hidden');
+                                openDiv.classList.remove('details-open');
+                                openDiv.closest('.p-3').querySelector('svg').classList.remove('rotate-180');
+                            }
+                        });
+
+
+                        detailsDiv.classList.remove('hidden');
+                        detailsDiv.classList.add('details-open');
+                        svgIcon.classList.add('rotate-180');
+                    } else {
+                        detailsDiv.classList.add('hidden');
+                        detailsDiv.classList.remove('details-open');
+                        svgIcon.classList.remove('rotate-180');
+                    }
+                });
+            });
+            
+            document.querySelectorAll('#today-records-container .delete-record-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    const recordId = parseInt(e.target.dataset.id);
+                    
+                    if (confirm('আপনি কি নিশ্চিত যে এই রেকর্ডটি মুছে ফেলতে চান?')) {
+                        deleteRecord(recordId, null, null, true); 
+                    }
+                });
+            });
+        };
+
+        // --- Display Unique Animals Function ---
+        const displayUniqueAnimals = () => {
+            const records = loadRecords();
+            
+            const uniqueAnimalsMap = {};
+
+            records.forEach(record => {
+                const key = `${record.animalId}-${record.lineNumber}`;
+                if (!uniqueAnimalsMap[key]) {
+                    uniqueAnimalsMap[key] = {
+                        animalId: record.animalId,
+                        lineNumber: record.lineNumber,
+                        lastCheckup: record.date,
+                        recordCount: 0,
+                    };
+                }
+                uniqueAnimalsMap[key].recordCount++;
+                if (new Date(record.date) > new Date(uniqueAnimalsMap[key].lastCheckup)) {
+                    uniqueAnimalsMap[key].lastCheckup = record.date;
+                }
+            });
+
+            const uniqueAnimalsList = Object.values(uniqueAnimalsMap).sort((a, b) => 
+                (a.animalId + a.lineNumber) - (b.animalId + b.lineNumber) 
+            );
+            
+            switchView('unique-animals-view');
+            uniqueAnimalsContainer.innerHTML = '';
+            uniqueCountDisplay.textContent = `মোট ইউনিক পশুর সংখ্যা: ${uniqueAnimalsList.length} টি।`;
+
+            if (uniqueAnimalsList.length === 0) {
+                uniqueAnimalsContainer.innerHTML = '<p class="text-center text-gray-500 p-4">বর্তমানে কোনো ইউনিক পশুর রেকর্ড নেই।</p>';
+                return;
+            }
+
+            uniqueAnimalsList.forEach(animal => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-100 p-4 rounded-lg border-l-4 border-farm-blue shadow-sm';
+                card.innerHTML = `
+                    <h3 class="text-lg font-bold text-farm-dark">পশু আইডি: ${animal.animalId} (লাইন: ${animal.lineNumber})</h3>
+                    <p class="text-sm text-gray-600 mt-1">সর্বশেষ পরীক্ষা: <span class="font-medium">${animal.lastCheckup}</span></p>
+                    <p class="text-xs text-gray-500">মোট রেকর্ড: ${animal.recordCount} টি</p>
+                    
+                    <div class="mt-3 flex space-x-2">
+                        <button class="view-history-button px-3 py-1 bg-farm-orange text-white text-xs rounded hover:bg-orange-600 transition duration-150" 
+                            data-animal-id="${animal.animalId}" data-line-number="${animal.lineNumber}">
+                            বিস্তারিত ইতিহাস দেখুন
+                        </button>
+                        <button class="add-new-record-quick-button px-3 py-1 bg-farm-green text-white text-xs rounded hover:bg-farm-dark transition duration-150" 
+                            data-animal-id="${animal.animalId}" data-line-number="${animal.lineNumber}">
+                            নতুন রেকর্ড যোগ করুন
+                        </button>
+                    </div>
+                `;
+                uniqueAnimalsContainer.appendChild(card);
+            });
+            
+            // Add event listeners for the new view
+            document.querySelectorAll('#unique-animals-container .view-history-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const animalId = e.target.dataset.animalId;
+                    const lineNumber = e.target.dataset.lineNumber;
+                    displayDetailedHistory(animalId, lineNumber);
+                    backToListButton.textContent = 'ইউনিক পশুর লিস্টে ফিরে যান'; // Custom back button text
+                });
+            });
+            
+            document.querySelectorAll('#unique-animals-container .add-new-record-quick-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const animalId = e.target.dataset.animalId;
+                    const lineNumber = e.target.dataset.lineNumber;
+                    switchView('add-record', animalId, lineNumber); 
+                });
+            });
+        };
+        
+        // --- Switch View Function ---
+        const switchView = (activeViewId, animalId = null, lineNumber = null) => {
+            // Include all sections in the hide/show logic
+            [dashboardView, dataManagementSection, addRecordSection, homeSearchView, searchResultsView, detailedHistoryView, todayRecordsView, uniqueAnimalsView].forEach(section => {
+                if (section) {
+                    if (section.id === 'dashboard-view') {
+                        // Dashboard is visible with home-search-view or on its own
+                        section.classList.toggle('hidden', activeViewId !== 'home-search-view' && activeViewId !== 'dashboard-view');
+                    } else {
+                        section.classList.toggle('hidden', section.id !== activeViewId);
+                    }
+                }
+            });
+
+            const activeSection = document.getElementById(activeViewId);
+            if (activeSection) {
+                activeSection.classList.remove('hidden');
+            }
+
+            // Pre-fill Animal ID/Line Number if navigating to add-record
+            if (activeViewId === 'add-record') {
+                document.getElementById('checkup-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('animal-id').value = animalId || '';
+                document.getElementById('line-number').value = lineNumber || '';
+                document.getElementById('disease-name').value = '';
+                document.getElementById('treatment').value = '';
+            }
+        };
+
+
+        // --- Navigation Handlers ---
+        navHome.addEventListener('click', () => switchView('home-search-view'));
+        navNewEntry.addEventListener('click', () => {
+            form.reset(); 
+            switchView('add-record');
+        });
+        navBackup.addEventListener('click', () => switchView('data-management'));
+        navTodayEntries.addEventListener('click', displayTodayEntries); 
+        backToHomeFromToday.addEventListener('click', () => switchView('home-search-view')); 
+        
+        // Back to home from Unique Animals View
+        backToHomeFromUnique.addEventListener('click', () => switchView('home-search-view'));
+
+
+        // --- Form Submission (Add Record) ---
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const animalIdValue = document.getElementById('animal-id').value.trim();
+            const lineNumberValue = document.getElementById('line-number').value.trim();
+            const checkupDate = document.getElementById('checkup-date').value;
+            const diseaseName = document.getElementById('disease-name').value.trim();
+            const treatment = document.getElementById('treatment').value.trim();
+            
+            // Input Sanitization (Saves as String for compatibility with existing search logic)
+            const parsedAnimalId = parseInt(animalIdValue);
+            const parsedLineNumber = parseInt(lineNumberValue);
+
+            if (isNaN(parsedAnimalId) || isNaN(parsedLineNumber)) {
+                showMessage('পশুর আইডি এবং লাইন নম্বর অবশ্যই সংখ্যা হতে হবে।', 'error');
+                return;
+            }
+
+            if (!animalIdValue || !lineNumberValue || !checkupDate || !diseaseName || !treatment) {
+                showMessage('অনুগ্রহ করে সব তথ্য পূরণ করুন।', 'error'); 
+                return;
+            }
+            
+            const newRecord = {
+                id: Date.now(),
+                animalId: parsedAnimalId.toString(), 
+                lineNumber: parsedLineNumber.toString(), 
+                date: checkupDate,
+                disease: diseaseName,
+                treatment: treatment,
+                timestamp: new Date().toISOString()
+            };
+
+            const records = loadRecords();
+            records.push(newRecord);
+            saveRecords(records); 
+            
+            // Form Reset
+            form.reset(); 
+            document.getElementById('checkup-date').value = new Date().toISOString().split('T')[0];
+
+            showMessage(`Animal ID ${newRecord.animalId} এর জন্য রেকর্ড সফলভাবে সংরক্ষণ করা হয়েছে।`, 'success');
+            
+            displayTodayEntries();
+            
+            // Auto-scroll to the top
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+        });
+
+
+        // --- Search Functionality ---
+        const searchAndDisplayResults = (query) => {
+            const records = loadRecords();
+            const normalizedQuery = query.trim();
+
+            const foundRecords = records
+                .filter(record => record.animalId === normalizedQuery)
+                .sort((a, b) => new Date(b.date) - new Date(a.date)); 
+
+            switchView('search-results-view');
+            searchResultsTitle.textContent = `অনুসন্ধানের ফলাফল: Animal ID ${normalizedQuery}`;
+            searchQueryDisplay.textContent = `মোট রেকর্ড পাওয়া গেছে: ${foundRecords.length} টি।`;
+            
+            let listContainer = document.querySelector('#records-container > .space-y-4');
+            if (listContainer) listContainer.remove();
+
+            if (foundRecords.length === 0) {
+                emptyState.classList.remove('hidden');
+                addFirstRecordButton.dataset.animalId = normalizedQuery;
+            } else {
+                emptyState.classList.add('hidden');
+                
+                const uniqueAnimals = {};
+                foundRecords.forEach(record => {
+                    const key = `${record.animalId}-${record.lineNumber}`;
+                    if (!uniqueAnimals[key]) {
+                        uniqueAnimals[key] = {
+                            animalId: record.animalId,
+                            lineNumber: record.lineNumber,
+                            lastCheckup: record.date,
+                            recordCount: 0,
+                        };
+                    }
+                    uniqueAnimals[key].recordCount++;
+                    if (new Date(record.date) > new Date(uniqueAnimals[key].lastCheckup)) {
+                         uniqueAnimals[key].lastCheckup = record.date;
+                    }
+                });
+
+                listContainer = document.createElement('div');
+                listContainer.className = 'space-y-4';
+                
+                Object.values(uniqueAnimals).forEach(animal => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-gray-100 p-4 rounded-lg border-l-4 border-farm-dark shadow-sm';
+                    card.innerHTML = `
+                        <h3 class="text-lg font-semibold text-farm-dark">পশু আইডি: ${animal.animalId} (লাইন: ${animal.lineNumber})</h3>
+                        <p class="text-sm text-gray-600 mt-1">সর্বশেষ পরীক্ষা: <span class="font-medium">${animal.lastCheckup}</span></p>
+                        <p class="text-xs text-gray-500">মোট রেকর্ড: ${animal.recordCount} টি</p>
+                        
+                        <div class="mt-3 flex space-x-2">
+                            <button class="view-history-button px-3 py-1 bg-farm-orange text-white text-xs rounded hover:bg-orange-600 transition duration-150" 
+                                data-animal-id="${animal.animalId}" data-line-number="${animal.lineNumber}">
+                                বিস্তারিত ইতিহাস দেখুন
+                            </button>
+                            <button class="add-new-record-quick-button px-3 py-1 bg-farm-green text-white text-xs rounded hover:bg-farm-dark transition duration-150" 
+                                data-animal-id="${animal.animalId}" data-line-number="${animal.lineNumber}">
+                                নতুন রেকর্ড যোগ করুন
+                            </button>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+                
+                recordsContainer.appendChild(listContainer);
+
+                document.querySelectorAll('.view-history-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const animalId = e.target.dataset.animalId;
+                        const lineNumber = e.target.dataset.lineNumber;
+                        displayDetailedHistory(animalId, lineNumber);
+                    });
+                });
+                
+                document.querySelectorAll('.add-new-record-quick-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const animalId = e.target.dataset.animalId;
+                        const lineNumber = e.target.dataset.lineNumber;
+                        switchView('add-record', animalId, lineNumber); 
+                    });
+                });
+            }
+        };
+
+        // --- Detailed History View ---
+        const displayDetailedHistory = (animalId, lineNumber) => {
+            const records = loadRecords();
+            const detailedRecords = records
+                .filter(record => record.animalId === animalId && record.lineNumber === lineNumber)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); 
+            
+            switchView('detailed-history-view');
+            detailedHistoryTitle.textContent = `Animal ID: ${animalId} (লাইন: ${lineNumber})`;
+            detailedRecordsContainer.innerHTML = '';
+            
+            addMedicineForThisAnimalButton.dataset.animalId = animalId;
+            addMedicineForThisAnimalButton.dataset.lineNumber = lineNumber;
+
+            if (detailedRecords.length === 0) {
+                 detailedRecordsContainer.innerHTML = '<p class="text-center text-gray-500 p-4">এই পশুর জন্য কোনো রেকর্ড নেই।</p>';
+                 return;
+            }
+
+            detailedRecords.forEach(record => {
+                const recordDiv = document.createElement('div');
+                recordDiv.className = 'p-3 border-b border-gray-200 bg-white rounded-md mb-2 shadow-sm';
+                
+                const fullDate = new Date(record.timestamp);
+                const datePart = record.date; 
+                
+                const timePart = fullDate.toLocaleTimeString('bn-BD', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+
+                const treatmentShort = record.treatment.split(/\s+/)[0] || 'N/A';
+                const treatmentDetails = record.treatment;
+
+                recordDiv.innerHTML = `
+                    <div class="flex justify-between items-center cursor-pointer toggle-details" data-id="${record.id}">
+                        <p class="text-sm font-semibold text-farm-dark">
+                            লাইন ${record.lineNumber} | ${datePart} ${timePart} | <span class="text-farm-red font-bold">${record.disease}</span> | <span class="text-farm-green">${treatmentShort}</span>
+                        </p>
+                        <svg class="w-4 h-4 text-farm-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+
+                    <div id="details-${record.id}" class="hidden mt-2 p-3 bg-gray-50 border-l-4 border-farm-orange">
+                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${record.disease}</span></p>
+                        <p class="text-xs font-medium text-gray-700 mt-1">পূর্ণ চিকিৎসা: <span class="italic">${treatmentDetails.replace(/\n/g, '<br>')}</span></p>
+                         <div class="flex justify-between items-center mt-3">
+                            <p class="text-xs text-gray-400 italic">রেকর্ড ID: ${record.id}</p>
+                            <button class="delete-record-button text-farm-red hover:text-red-700 text-xs font-medium transition" data-id="${record.id}" data-view="detailed">
+                                মুছে ফেলুন
+                            </button>
+                        </div>
+                    </div>
+                `;
+                detailedRecordsContainer.appendChild(recordDiv);
+            });
+
+            // Toggle Details and Delete Listeners
+            document.querySelectorAll('#detailed-records-container .toggle-details').forEach(element => {
+                element.addEventListener('click', (e) => {
+                    const recordId = e.currentTarget.dataset.id;
+                    const detailsDiv = document.getElementById(`details-${recordId}`);
+                    const svgIcon = e.currentTarget.querySelector('svg');
+                    
+                    if (detailsDiv.classList.contains('hidden')) {
+                        document.querySelectorAll('#detailed-records-container .details-open').forEach(openDiv => {
+                            if (openDiv.id !== `details-${recordId}`) {
+                                openDiv.classList.add('hidden');
+                                openDiv.classList.remove('details-open');
+                                openDiv.closest('.p-3').querySelector('svg').classList.remove('rotate-180');
+                            }
+                        });
+
+
+                        detailsDiv.classList.remove('hidden');
+                        detailsDiv.classList.add('details-open');
+                        svgIcon.classList.add('rotate-180');
+                    } else {
+                        detailsDiv.classList.add('hidden');
+                        detailsDiv.classList.remove('details-open');
+                        svgIcon.classList.remove('rotate-180');
+                    }
+                });
+            });
+            
+            document.querySelectorAll('#detailed-records-container .delete-record-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); 
+                    const recordId = parseInt(e.target.dataset.id);
+                    if (confirm('আপনি কি নিশ্চিত যে এই রেকর্ডটি মুছে ফেলতে চান?')) {
+                        deleteRecord(recordId, animalId, lineNumber);
+                    }
+                });
+            });
+        };
+        
+        // --- Delete Record Functionality ---
+        const deleteRecord = (recordId, animalId, lineNumber, isTodayView = false) => {
+            let records = loadRecords();
+            const initialLength = records.length;
+            records = records.filter(record => record.id !== recordId);
+            
+            if (records.length < initialLength) {
+                saveRecords(records); 
+                showMessage('রেকর্ড সফলভাবে মুছে ফেলা হয়েছে।', 'success');
+                
+                if (isTodayView) {
+                     displayTodayEntries();
+                } else {
+                    const remainingRecords = records.filter(r => r.animalId === animalId && r.lineNumber === lineNumber).length;
+
+                    if (remainingRecords === 0) {
+                        switchView('home-search-view');
+                        searchInput.value = '';
+                    } else {
+                        displayDetailedHistory(animalId, lineNumber); 
+                    }
+                }
+                
+                renderDashboard(); 
+
+            } else {
+                showMessage('রেকর্ড মোছা সম্ভব হয়নি।', 'error');
+            }
+        };
+
+        // --- NEW: Delete All Records Function ---
+        const deleteAllRecords = () => {
+            const records = loadRecords();
+
+            if (records.length === 0) {
+                showMessage('মুছে ফেলার জন্য কোনো রেকর্ড নেই।', 'error');
+                return;
+            }
+
+            // Double Confirmation for Safety
+            if (confirm('🚨 অত্যন্ত গুরুত্বপূর্ণ সতর্কতা! 🚨 আপনি কি নিশ্চিত যে ফার্মের সমস্ত স্বাস্থ্য রেকর্ড (মোট ' + records.length + ' টি) চিরতরে মুছে ফেলতে চান? এই অ্যাকশনটি ফিরিয়ে আনা যাবে না।')) {
+                if (prompt('নিশ্চিত করতে "DELETE" শব্দটি ইংরেজিতে লিখুন: ') === 'DELETE') {
+                    localStorage.removeItem(STORAGE_KEY);
+                    saveRecords([]); // Ensure empty array is saved and dashboard is updated
+                    showMessage('✅ সফলভাবে সমস্ত রেকর্ড মুছে ফেলা হয়েছে।', 'success');
+                    
+                    // Switch back to the home screen after deletion
+                    switchView('home-search-view');
+                    renderDashboard(); 
+                } else {
+                    showMessage('মুছে ফেলার প্রক্রিয়া বাতিল করা হয়েছে।', 'error');
+                }
+            }
+        };
+
+
+        // --- Event Listeners for Actions ---
+        searchActionButton.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                searchAndDisplayResults(query);
+            } else {
+                showMessage('অনুসন্ধানের জন্য পশুর আইডি নম্বর লিখুন।', 'error');
+            }
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchActionButton.click();
+            }
+        });
+        
+        backToHomeFromSearchButton.addEventListener('click', () => {
+            switchView('home-search-view');
+            searchInput.value = ''; 
+        });
+        
+        backToListButton.addEventListener('click', () => {
+            const currentButtonText = backToListButton.textContent;
+            
+            if (currentButtonText.includes('ইউনিক পশুর লিস্টে')) {
+                displayUniqueAnimals();
+                backToListButton.textContent = 'ফলাফল / হোম স্ক্রিনে ফিরে যান'; // Reset text after list view is shown
+            } else {
+                 const currentTitle = detailedHistoryTitle.textContent;
+                 const currentAnimalId = currentTitle.match(/Animal ID: (\d+)/);
+
+                if (currentAnimalId && currentAnimalId[1]) {
+                    searchAndDisplayResults(currentAnimalId[1]);
+                } else {
+                    switchView('home-search-view');
+                }
+            }
+        });
+
+        addFirstRecordButton.addEventListener('click', (e) => {
+            const animalId = e.currentTarget.dataset.animalId; 
+            if (animalId) {
+                switchView('add-record', animalId);
+            } else {
+                showMessage('ত্রুটি: পশুর আইডি খুঁজে পাওয়া যাচ্ছে না।', 'error');
+                switchView('home-search-view');
+            }
+        });
+
+        addMedicineForThisAnimalButton.addEventListener('click', (e) => {
+            const animalId = e.currentTarget.dataset.animalId;
+            const lineNumber = e.currentTarget.dataset.lineNumber;
+            if (animalId) {
+                switchView('add-record', animalId, lineNumber);
+            } else {
+                showMessage('পশুর আইডি খুঁজে পাওয়া যায়নি।', 'error');
+                switchView('home-search-view');
+            }
+        });
+        
+        // --- Export/Import Functions ---
+        const downloadFile = (data, filename, type) => {
+            const blob = new Blob([data], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        exportJsonButton.addEventListener('click', () => {
+            const records = loadRecords();
+            if (records.length === 0) {
+                showMessage('রপ্তানি করার জন্য কোনো রেকর্ড নেই।', 'error');
+                return;
+            }
+            const json = JSON.stringify(records, null, 2);
+            downloadFile(json, 'mostafiz_farm_health_records.json', 'application/json');
+            showMessage('JSON ডেটা সফলভাবে রপ্তানি করা হয়েছে।', 'success');
+        });
+
+        exportCsvButton.addEventListener('click', () => {
+            const records = loadRecords();
+            if (records.length === 0) {
+                showMessage('রপ্তানি করার জন্য কোনো রেকর্ড নেই।', 'error');
+                return;
+            }
+
+            const headers = ["ID", "Animal ID", "Line Number", "Date", "Disease", "Treatment", "Timestamp"];
+            const rows = records.map(record => [
+                record.id, 
+                record.animalId, 
+                record.lineNumber, 
+                record.date, 
+                `"${record.disease.replace(/"/g, '""')}"`, 
+                `"${record.treatment.replace(/"/g, '""').replace(/\n/g, '\\n')}"`, 
+                record.timestamp || ''
+            ].join(','));
+
+            const csvContent = [headers.join(','), ...rows].join('\n');
+            downloadFile(csvContent, 'mostafiz_farm_health_records.csv', 'text/csv');
+            showMessage('CSV ডেটা সফলভাবে রপ্তানি করা হয়েছে।', 'success');
+        });
+        
+        const handleImport = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const content = event.target.result;
+                    let importedRecords = [];
+                    
+                    if (file.name.endsWith('.json')) {
+                        importedRecords = JSON.parse(content);
+                        if (!Array.isArray(importedRecords)) {
+                            throw new Error("JSON ফাইলটি সঠিক বিন্যাসে নেই।");
+                        }
+                    } else if (file.name.endsWith('.csv')) {
+                        const lines = content.split('\n');
+                        const headers = lines[0].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/g).map(header => header.trim().replace(/['"]+/g, ''));
+                        
+                        if (headers.length < 5 || !headers.includes("Animal ID") || !headers.includes("Line Number") || !headers.includes("Date")) {
+                             throw new Error("CSV হেডারগুলি সঠিক বিন্যাসে নেই (Animal ID, Line Number, Date আবশ্যক)।");
+                        }
+                        
+                        const headerMap = {
+                            "Animal ID": 'animalId', 
+                            "Line Number": 'lineNumber', 
+                            "Date": 'date', 
+                            "Disease": 'disease', 
+                            "Treatment": 'treatment',
+                            "ID": 'id',
+                            "Timestamp": 'timestamp'
+                        };
+
+                        for (let i = 1; i < lines.length; i++) {
+                            const line = lines[i].trim();
+                            if (!line) continue;
+                            
+                            const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/g); 
+
+                            if (values.length < 5) continue;
+                            
+                            let record = {};
+                            headers.forEach((header, index) => {
+                                const key = headerMap[header.trim().replace(/['"]+/g, '')] || header.toLowerCase().replace(/\s+/g, '');
+                                let value = values[index] ? values[index].trim().replace(/^"|"$/g, '').replace(/""/g, '"').replace(/\\n/g, '\n') : '';
+                                
+                                if (key === 'id' && (value === '' || isNaN(parseInt(value)))) {
+                                    value = Date.now() + i; 
+                                } else if (key === 'lineNumber' && value !== '') {
+                                     value = parseInt(value).toString(); 
+                                }
+                                
+                                record[key] = value;
+                            });
+                            
+                            if (record.animalId && record.date && record.lineNumber) {
+                                if (!record.timestamp) {
+                                    record.timestamp = new Date(record.date).toISOString(); 
+                                }
+                                importedRecords.push(record);
+                            }
+                        }
+                    } else {
+                        throw new Error("অসমর্থিত ফাইল ফর্ম্যাট। শুধুমাত্র JSON বা CSV ফাইল আমদানি করুন।");
+                    }
+
+                    if (importedRecords.length === 0) {
+                         throw new Error("ফাইলের ভিতরে কোনো বৈধ রেকর্ড খুঁজে পাওয়া যায়নি।");
+                    }
+                    
+                    if (confirm(`আপনি কি নিশ্চিত? এটি আপনার বর্তমান ${loadRecords().length} টি রেকর্ড মুছে দিয়ে ${importedRecords.length} টি নতুন রেকর্ড দিয়ে প্রতিস্থাপন করবে।`)) {
+                        saveRecords(importedRecords);
+                        showMessage(`সফলভাবে ${importedRecords.length} টি রেকর্ড আমদানি করা হয়েছে।`, 'success');
+                        switchView('home-search-view'); 
+                    }
+                    
+                } catch (error) {
+                    showMessage(`ডেটা আমদানি ত্রুটি: ${error.message}`, 'error');
+                    console.error('Import error:', error);
+                }
+            };
+
+            reader.readAsText(file);
+        };
+
+        fileInput.addEventListener('change', handleImport);
+        
+        importJsonButton.addEventListener('click', () => {
+            fileInput.accept = '.json';
+            fileInput.click();
+        });
+
+        importCsvButton.addEventListener('click', () => {
+            fileInput.accept = '.csv';
+            fileInput.click();
+        });
+
+        // Event Listener for Delete All
+        deleteAllButton.addEventListener('click', deleteAllRecords);
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            switchView('home-search-view');
+            // Set today's date in the checkup date field on load
+            document.getElementById('checkup-date').value = new Date().toISOString().split('T')[0];
+            renderDashboard(); 
+        });
+
+    </script>
+</body>
+</html>
