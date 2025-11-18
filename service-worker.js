@@ -1,55 +1,60 @@
-const CACHE_NAME = 'farm-health-cache-v1';
+// service-worker.js
+
+const CACHE_NAME = 'farm-health-v1';
+
+// সকল গুরুত্বপূর্ণ ফাইল যা অফলাইনে প্রয়োজন
 const urlsToCache = [
-  '/', 
-  '/index.html', 
-  '/manifest.json',
-  // আইকনগুলিও ক্যাশ করুন 
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
-  // আপনি যদি Tailwind CDN বাদ দিয়ে লোকাল CSS ব্যবহার করেন তবে সেটিও এখানে যোগ করতে পারেন
+    './', // এই ফোল্ডারের রুট ফাইল (index.html)
+    './index.html', // আপনার প্রধান HTML ফাইল
+    './manifest.json',
+    // আপনার প্রধান JavaScript অংশ, যদি আলাদা ফাইলে থাকে
+    // '/js/app.js', 
+    // যদি আপনি CDN ব্যবহার না করে নিজের CSS ফাইল ব্যবহার করেন, তবে সেটি এখানে যোগ করতে হবে।
+
+    // Note: CDN ফাইল ক্যাশ করা কঠিন, তবে চেষ্টা করা যেতে পারে।
+    // 'https://cdn.tailwindcss.com' 
 ];
 
-// Install event: ক্যাশে সম্পদ সংরক্ষণ
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-      .catch(err => {
-        console.log('Cache addAll failed:', err);
-      })
-  );
-});
-
-// Fetch event: ক্যাশ থেকে সম্পদ পরিবেশন
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Cache hit - ক্যাশ থেকে ফিরিয়ে দিন
-        if (response) {
-          return response;
-        }
-        // Cache miss - নেটওয়ার্ক থেকে আনুন
-        return fetch(event.request);
-      })
-  );
-});
-
-// Activate event: পুরোনো ক্যাশে পরিষ্কার করুন
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
+// 1. INSTALL: যখন সার্ভিস ওয়ার্কার ইনস্টল হয়, তখন সব ফাইল ক্যাশে সেভ করো।
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+        .then((cache) => {
+            console.log('Opened cache and added all core files');
+            // 'cache.addAll' সব ফাইল ক্যাশ করে, তবে যদি কোনো CDN ফাইলে CORS সমস্যা হয় তবে এটি ব্যর্থ হতে পারে।
+            return cache.addAll(urlsToCache);
         })
-      );
-    })
-  );
+        .catch(err => console.error('Cache installation failed:', err))
+    );
+});
+
+// 2. FETCH: যখন ব্রাউজার কিছু লোড করার চেষ্টা করে।
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request)
+        .then((response) => {
+            // যদি ক্যাশে পাওয়া যায়, তবে ক্যাশে থেকে সেটি দেখাও
+            if (response) {
+                return response;
+            }
+            // না হলে নেটওয়ার্ক থেকে লোড করার চেষ্টা করো
+            return fetch(event.request);
+        })
+    );
+});
+
+// 3. ACTIVATE: পুরোনো ক্যাশ ভার্সন মুছে দাও 
+self.addEventListener('activate', (event) => {
+    const cacheWhitelist = [CACHE_NAME];
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheWhitelist.indexOf(cacheName) === -1) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
 });
