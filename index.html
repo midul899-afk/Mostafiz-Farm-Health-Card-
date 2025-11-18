@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mostafiz Farm Health Card</title>
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#38a169">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -38,48 +34,15 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
-    
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    
-    <script>
-        // 🚨 এই কী গুলি আপনার Firebase Project থেকে পাওয়া কনফিগারেশন দিয়ে পরিবর্তন করুন!
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
-            databaseURL: "YOUR_DATABASE_URL",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        
-        // 🎯 স্থির অ্যাডমিন আইডি ব্যবহার করা হচ্ছে (Gmail লগইন ছাড়া)
-        const FIREBASE_ADMIN_ID = 'mostafiz_farm_fixed_admin';
-        
-        // ডেটাবেস রেফারেন্স এখন স্থির অ্যাডমিন আইডি ব্যবহার করবে
-        let FIREBASE_DB_REF = database.ref('records/' + FIREBASE_ADMIN_ID);
-        
-        // অফলাইন ডেটা লোড করার জন্য Firebase অফলাইন ফিচার এনাবল করা হয়েছে
-        firebase.database().ref().keepSynced(true);
-        
-    </script>
 </head>
 <body class="p-4 pb-20 sm:p-6 bg-farm-light min-h-screen"> 
 
-    <div id="app-content" class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto">
         <header class="text-center mb-4 bg-farm-green text-white p-6 rounded-xl container-card">
             <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
                 Mostafiz Farm Health Card
             </h1>
-            <p class="text-sm opacity-90 mt-1">আপনার গবাদি পশুর ডিজিটাল স্বাস্থ্য রেকর্ড (অ্যাডমিন মোড)</p>
-            
-             <div class="mt-3 text-xs flex justify-center items-center bg-farm-dark/50 p-2 rounded-lg">
-                <span class="truncate font-medium">স্থির ডাটাবেস পাথ: **records/${FIREBASE_ADMIN_ID}**</span>
-            </div>
+            <p class="text-sm opacity-90 mt-1">আপনার গবাদি পশুর ডিজিটাল স্বাস্থ্য রেকর্ড</p>
         </header>
 
         <section id="dashboard-view" class="mb-6 p-4 bg-white rounded-xl container-card">
@@ -139,16 +102,6 @@
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                             রেকর্ড রপ্তানি (JSON)
                         </button>
-                    </div>
-                     <div id="email-backup-section" class="mt-3 p-3 bg-blue-50 border-l-4 border-farm-blue rounded-md text-sm text-gray-700">
-                        <p class="font-semibold mb-1">ব্যাকআপ নির্দেশিকা:</p>
-                        <p>ডেটা সফলভাবে ডাউনলোড হওয়ার পর, আপনি ফাইলটি Gmail-এ অ্যাটাচ করে নিজের কাছে বা অন্য ঠিকানায় পাঠাতে পারেন।</p>
-                        <p class="mt-2">
-                            <a id="gmail-backup-link" href="https://mail.google.com/mail/?view=cm&fs=1&su=Mostafiz+Farm+Health+Records+Backup&body=অনুগ্রহ+করে+অ্যাটাচমেন্টে+ডাউনলোড+করা+রেকর্ড+ফাইলটি+(CSV/JSON)+সংযুক্ত+করুন।+%0A%0Aএটি+আপনার+পশুর+স্বাস্থ্য+রেকর্ডের+ব্যাকআপ।&to=" target="_blank" class="text-farm-blue hover:text-blue-700 font-medium inline-flex items-center">
-                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
-                                Gmail ব্যাকআপ ইমেল ড্রাফ্ট খুলুন
-                            </a>
-                        </p>
                     </div>
                 </div>
 
@@ -318,8 +271,7 @@
             <div id="detailed-records-container" class="space-y-1 bg-gray-50 p-2 rounded-lg">
                 </div>
         </section>
-
-
+        
         <section id="unique-animals-view" class="p-6 bg-white rounded-xl container-card hidden">
             <button id="back-to-home-from-unique" class="flex items-center text-farm-dark hover:text-farm-green mb-4 text-sm font-medium transition duration-150">
                 <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -360,18 +312,6 @@
     </nav>
 
     <script>
-        // --- PWA Service Worker Registration ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                .then(registration => {
-                    console.log('SW registered:', registration);
-                }).catch(error => {
-                    console.error('SW registration failed:', error);
-                });
-            });
-        }
-        
         const STORAGE_KEY = 'mostafizFarmHealthRecords';
         const form = document.getElementById('health-record-form');
         const recordsContainer = document.getElementById('records-container');
@@ -408,7 +348,7 @@
         const fileInput = document.getElementById('file-input');
         
         // Delete All Button
-        const deleteAllButton = document.getElementById('delete-all-button'); 
+        const deleteAllButton = document.getElementById('delete-all-button'); // NEW
 
         // Search Elements
         const searchInput = document.getElementById('search-input'); 
@@ -424,7 +364,6 @@
         const dataManagementSection = document.getElementById('data-management');
         const addRecordSection = document.getElementById('add-record');
         const homeSearchView = document.getElementById('home-search-view'); 
-        const searchResultsView = document.getElementById('search-results-view');
         const detailedHistoryView = document.getElementById('detailed-history-view');
         const detailedRecordsContainer = document.getElementById('detailed-records-container');
         const detailedHistoryTitle = document.getElementById('detailed-history-title');
@@ -443,40 +382,16 @@
         const navNewEntry = document.getElementById('nav-new-entry');
         const navBackup = document.getElementById('nav-backup');
         const navTodayEntries = document.getElementById('nav-today-entries');
-        
-        
+
         // --- Core Functions ---
 
-        // NEW: Sanitization Function
-        const sanitizeHTML = (str) => {
-             const temp = document.createElement('div');
-             temp.textContent = str;
-             return temp.innerHTML;
-         };
-
-
-        // 🔄 Load Records function (Only Local Storage)
         const loadRecords = () => {
             const data = localStorage.getItem(STORAGE_KEY);
             return data ? JSON.parse(data) : [];
         };
 
-        // 🔄 Save Records function to sync with Firebase
         const saveRecords = (records) => {
-            // 1. লোকাল স্টোরেজে সংরক্ষণ (অফলাইন ক্ষমতা)
             localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-
-            // 2. Firebase-এ সিঙ্ক (অনলাইন ব্যাকআপ)
-            FIREBASE_DB_REF.set(records)
-                .then(() => {
-                    console.log("Firebase sync successful.");
-                    showMessage('✅ রেকর্ড সফলভাবে ক্লাউডে সিঙ্ক হয়েছে।', 'success');
-                })
-                .catch((error) => {
-                    console.error("Firebase সেভ ত্রুটি:", error);
-                    showMessage('⚠️ ক্লাউডে ডেটা সিঙ্ক করা যায়নি। লোকালি সেভ করা হয়েছে।', 'error');
-                });
-
             updateTodayEntriesCount(); 
             renderDashboard(); 
         };
@@ -560,24 +475,16 @@
             // 4. Last Entry Date/Time
             if (records.length > 0) {
                 const newestRecord = records.reduce((latest, current) => {
-                    // Check for timestamp, fallback to date if timestamp is missing (for imported records)
-                    const latestTimestamp = new Date(latest.timestamp || latest.date);
-                    const currentTimestamp = new Date(current.timestamp || current.date);
-                    return (currentTimestamp > latestTimestamp) ? current : latest;
+                    return (new Date(current.timestamp) > new Date(latest.timestamp)) ? current : latest;
                 }, records[0]); 
 
-                const fullDate = new Date(newestRecord.timestamp || newestRecord.date);
+                const fullDate = new Date(newestRecord.timestamp);
                 const datePart = newestRecord.date; 
-                
-                // Safety check for timePart if timestamp is not available
-                let timePart = 'N/A';
-                if (newestRecord.timestamp) {
-                     timePart = fullDate.toLocaleTimeString('bn-BD', { 
-                        hour: '2-digit', 
-                        minute: '2-digit',
-                        hour12: true 
-                    });
-                }
+                const timePart = fullDate.toLocaleTimeString('bn-BD', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
                 
                 statLastEntryDate.textContent = `${datePart} ${timePart}`;
             } else {
@@ -641,19 +548,18 @@
                     hour12: true 
                 });
 
-                // Use sanitized data for display
-                const treatmentDetails = sanitizeHTML(record.treatment);
+                const treatmentDetails = record.treatment;
 
                 recordDiv.innerHTML = `
                     <div class="flex justify-between items-center cursor-pointer toggle-details" data-id="${record.id}">
                         <p class="text-sm font-semibold text-farm-dark">
-                            Animal ID: ${record.animalId} | লাইন ${record.lineNumber} | ${timePart} | <span class="text-farm-red font-bold">${sanitizeHTML(record.disease)}</span>
+                            Animal ID: ${record.animalId} | লাইন ${record.lineNumber} | ${timePart} | <span class="text-farm-red font-bold">${record.disease}</span>
                         </p>
                         <svg class="w-4 h-4 text-farm-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
 
                     <div id="details-${record.id}" class="hidden mt-2 p-3 bg-gray-50 border-l-4 border-farm-orange">
-                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${sanitizeHTML(record.disease)}</span></p>
+                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${record.disease}</span></p>
                         <p class="text-xs font-medium text-gray-700 mt-1">পূর্ণ চিকিৎসা: <span class="italic">${treatmentDetails.replace(/\n/g, '<br>')}</span></p>
                          <div class="flex justify-between items-center mt-3">
                             <p class="text-xs text-gray-400 italic">রেকর্ড ID: ${record.id}</p>
@@ -787,9 +693,9 @@
             // Include all sections in the hide/show logic
             [dashboardView, dataManagementSection, addRecordSection, homeSearchView, searchResultsView, detailedHistoryView, todayRecordsView, uniqueAnimalsView].forEach(section => {
                 if (section) {
-                    // Dashboard is visible with home-search-view or on its own
                     if (section.id === 'dashboard-view') {
-                         section.classList.toggle('hidden', activeViewId !== 'home-search-view' && activeViewId !== 'dashboard-view');
+                        // Dashboard is visible with home-search-view or on its own
+                        section.classList.toggle('hidden', activeViewId !== 'home-search-view' && activeViewId !== 'dashboard-view');
                     } else {
                         section.classList.toggle('hidden', section.id !== activeViewId);
                     }
@@ -818,12 +724,8 @@
             form.reset(); 
             switchView('add-record');
         });
-        navBackup.addEventListener('click', () => {
-            switchView('data-management')
-        });
-        navTodayEntries.addEventListener('click', () => {
-            displayTodayEntries();
-        });
+        navBackup.addEventListener('click', () => switchView('data-management'));
+        navTodayEntries.addEventListener('click', displayTodayEntries); 
         backToHomeFromToday.addEventListener('click', () => switchView('home-search-view')); 
         
         // Back to home from Unique Animals View
@@ -859,9 +761,8 @@
                 animalId: parsedAnimalId.toString(), 
                 lineNumber: parsedLineNumber.toString(), 
                 date: checkupDate,
-                // Use sanitized data for storage
-                disease: sanitizeHTML(diseaseName),
-                treatment: sanitizeHTML(treatment),
+                disease: diseaseName,
+                treatment: treatment,
                 timestamp: new Date().toISOString()
             };
 
@@ -998,23 +899,19 @@
                     hour12: true 
                 });
 
-                // Use sanitized data for display
-                const diseaseSanitized = sanitizeHTML(record.disease);
-                const treatmentSanitized = sanitizeHTML(record.treatment);
-
-                const treatmentShort = treatmentSanitized.split(/\s+/)[0] || 'N/A';
-                const treatmentDetails = treatmentSanitized;
+                const treatmentShort = record.treatment.split(/\s+/)[0] || 'N/A';
+                const treatmentDetails = record.treatment;
 
                 recordDiv.innerHTML = `
                     <div class="flex justify-between items-center cursor-pointer toggle-details" data-id="${record.id}">
                         <p class="text-sm font-semibold text-farm-dark">
-                            লাইন ${record.lineNumber} | ${datePart} ${timePart} | <span class="text-farm-red font-bold">${diseaseSanitized}</span> | <span class="text-farm-green">${treatmentShort}</span>
+                            লাইন ${record.lineNumber} | ${datePart} ${timePart} | <span class="text-farm-red font-bold">${record.disease}</span> | <span class="text-farm-green">${treatmentShort}</span>
                         </p>
                         <svg class="w-4 h-4 text-farm-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
 
                     <div id="details-${record.id}" class="hidden mt-2 p-3 bg-gray-50 border-l-4 border-farm-orange">
-                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${diseaseSanitized}</span></p>
+                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${record.disease}</span></p>
                         <p class="text-xs font-medium text-gray-700 mt-1">পূর্ণ চিকিৎসা: <span class="italic">${treatmentDetails.replace(/\n/g, '<br>')}</span></p>
                          <div class="flex justify-between items-center mt-3">
                             <p class="text-xs text-gray-400 italic">রেকর্ড ID: ${record.id}</p>
@@ -1109,7 +1006,7 @@
             if (confirm('🚨 অত্যন্ত গুরুত্বপূর্ণ সতর্কতা! 🚨 আপনি কি নিশ্চিত যে ফার্মের সমস্ত স্বাস্থ্য রেকর্ড (মোট ' + records.length + ' টি) চিরতরে মুছে ফেলতে চান? এই অ্যাকশনটি ফিরিয়ে আনা যাবে না।')) {
                 if (prompt('নিশ্চিত করতে "DELETE" শব্দটি ইংরেজিতে লিখুন: ') === 'DELETE') {
                     localStorage.removeItem(STORAGE_KEY);
-                    saveRecords([]); // Ensure empty array is saved and dashboard is updated in both local/firebase
+                    saveRecords([]); // Ensure empty array is saved and dashboard is updated
                     showMessage('✅ সফলভাবে সমস্ত রেকর্ড মুছে ফেলা হয়েছে।', 'success');
                     
                     // Switch back to the home screen after deletion
@@ -1281,8 +1178,7 @@
                                      value = parseInt(value).toString(); 
                                 }
                                 
-                                // Sanitize imported data
-                                record[key] = sanitizeHTML(value);
+                                record[key] = value;
                             });
                             
                             if (record.animalId && record.date && record.lineNumber) {
@@ -1329,47 +1225,14 @@
 
         // Event Listener for Delete All
         deleteAllButton.addEventListener('click', deleteAllRecords);
-        
-        
-        // --- Database Listener (Simplified for Fixed Admin ID) ---
-        
-        const initializeDatabaseListener = () => {
-             // 1. Firebase Listener
-            FIREBASE_DB_REF.on('value', (snapshot) => {
-                const firebaseRecords = snapshot.val() || [];
-                const localRecords = loadRecords();
-                
-                // 2. ডেটা মার্জিং লজিক
-                if (firebaseRecords.length > 0) {
-                    // Firebase-এ ডেটা আছে, তাই সেটিই মাস্টার ডেটা। 
-                    if (JSON.stringify(localRecords) !== JSON.stringify(firebaseRecords)) {
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(firebaseRecords));
-                        console.log("Local storage updated from Firebase (Fixed ID sync).");
-                    }
-                } else if (localRecords.length > 0) {
-                    // Firebase খালি কিন্তু লোকাল স্টোরেজে ডেটা আছে, তাই লোকাল ডেটা Firebase-এ আপলোড করুন।
-                     FIREBASE_DB_REF.set(localRecords)
-                        .then(() => console.log("Local data uploaded to Firebase (Fixed ID backup)."))
-                        .catch(err => console.error("Error uploading local data:", err));
-                }
 
-                renderDashboard();
-                switchView('home-search-view'); 
-            }, (error) => {
-                console.error("Firebase read failed (You might be offline):", error);
-                showMessage('⚠️ অফলাইন মোড: ক্লাউড থেকে ডেটা লোড করা যায়নি। লোকাল ডেটা ব্যবহার করা হচ্ছে।', 'error');
-                renderDashboard();
-                switchView('home-search-view');
-            });
-        };
 
-        // --- Final Initialization (on DOM Load) ---
+        // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
+            switchView('home-search-view');
             // Set today's date in the checkup date field on load
             document.getElementById('checkup-date').value = new Date().toISOString().split('T')[0];
-            
-            // Start the database listener (since no login is required)
-            initializeDatabaseListener();
+            renderDashboard(); 
         });
 
     </script>
