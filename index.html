@@ -285,107 +285,6 @@
                 </div>
             </div>
             
- imal ID)</label>
-                    <input type="text" id="animal-id" required 
-                           inputmode="numeric" pattern="[0-9]+"
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm" 
-                           placeholder="যেমন: 101, 2504" 
-                           title="শুধুমাত্র সংখ্যাসূচক আইডি হতে হবে।">
-                </div>
-                
-                <div>
-                    <label for="line-number" class="block text-sm font-medium text-gray-700">লাইন নম্বর (Line Number)</label>
-                    <input type="text" id="line-number" required 
-                           inputmode="numeric" pattern="[0-9]+"
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm" 
-                           placeholder="যেমন: 1, 2, 3" 
-                           title="শুধুমাত্র সংখ্যাসূচক লাইন নম্বর হতে হবে।">
-                </div>
-
-                <div>
-                    <label for="checkup-date" class="block text-sm font-medium text-gray-700">পরীক্ষার তারিখ (Date of Checkup)</label>
-                    <input type="date" id="checkup-date" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm">
-                </div>
-                
-                <div>
-                    <label for="disease-name" class="block text-sm font-medium text-gray-700">রোগের নাম (Disease / Ailment Name)</label>
-                    <input list="common-diseases" id="disease-name" required
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm"
-                        placeholder="রোগের নাম নির্বাচন করুন বা লিখুন।">
-                    
-                    <datalist id="common-diseases">
-                        <option value="Pneumonia">
-                        <option value="Enteritis">
-                        <option value="Arthritis">
-                        <option value="Pink eye">
-                        <option value="Abscess">
-                        <option value="Anorexia">
-                        <option value="Anthrax">
-                        <option value="Bloat/Tympany">
-                        <option value="Calf Scour (Diarrhea)">
-                        <option value="Conjunctivitis">
-                        <option value="Constipation">
-                        <option value="Debility">
-                        <option value="Foot-and-Mouth Disease (FMD)">
-                        <option value="Lameness">
-                        <option value="Death">
-                    </datalist>
-                </div>
-
-                <div>
-                    <label for="treatment" class="block text-sm font-medium text-gray-700">চিকিৎসা / ঔষধ (Treatment / Medication)</label>
-                    <textarea id="treatment" rows="3" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-farm-green focus:border-farm-green sm:text-sm" placeholder="দেওয়া ঔষধ, ডোজ, এবং ফলো-আপ প্ল্যান।"></textarea>
-                </div>
-
-                <button type="submit" id="save-button" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-dark hover:bg-farm-green focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-farm-dark transition duration-150 ease-in-out">
-                    রেকর্ড সংরক্ষণ করুন
-                </button>
-            </form>
-        </section>
-
-        <section id="home-search-view" class="p-6 bg-white rounded-xl container-card">
-            <h2 id="search-list-title" class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">পশু আইডি দিয়ে রেকর্ড সার্চ করুন</h2>
-            
-            <div class="mb-4">
-                <label for="search-input" class="sr-only">পশুর আইডি দিয়ে সার্চ করুন</label>
-                <div class="relative flex items-center">
-                    <input type="text" id="search-input" placeholder="সম্পূর্ণ পশুর আইডি নম্বর লিখুন..." 
-                           inputmode="numeric" pattern="[0-9]*"
-                           class="block w-full pr-4 py-2 border border-gray-300 rounded-lg shadow-inner focus:ring-farm-green focus:border-farm-green transition sm:text-sm">
-                </div>
-            </div>
-
-            <button id="search-action-button" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-farm-orange hover:bg-orange-600 transition duration-150 ease-in-out">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                সার্চ করুন (Search)
-            </button>
-            
-            <p class="text-xs text-gray-500 mt-4 text-center">অনুসন্ধানের জন্য শুধুমাত্র সম্পূর্ণ আইডি নম্বর লিখুন।</p>
-        </section>
-
-
-        <section id="search-results-view" class="p-6 bg-white rounded-xl container-card hidden">
-            <button id="back-to-home-from-search" class="flex items-center text-farm-dark hover:text-farm-green mb-4 text-sm font-medium transition duration-150">
-                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                হোম স্ক্রিনে ফিরে যান
-            </button>
-            
-            <h2 id="search-results-title" class="text-2xl font-semibold text-farm-dark mb-4 border-b pb-2">অনুসন্ধানের ফলাফল</h2>
-            <p id="search-query-display" class="text-sm text-gray-600 mb-4 font-medium"></p>
-
-
-            <div id="records-container" class="space-y-4">
-                <div id="empty-state" class="text-gray-500 text-center p-4 hidden">
-                    <p class="text-lg font-semibold mb-3 text-farm-red">এই আইডি-তে কোনো রেকর্ড মেলেনি।</p>
-                    <button id="add-first-record-button" class="w-full inline-flex items-center justify-center py-3 px-4 border border-transparent shadow-md text-base font-medium rounded-md text-white bg-farm-green hover:bg-farm-dark transition duration-150 ease-in-out" 
-                    data-animal-id="">
-                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        এই আইডির জন্য প্রথম রেকর্ড যোগ করুন
-                    </button>
-                    <p class="text-xs text-gray-500 mt-3">নতুন রেকর্ড যোগ করতে উপরের বাটনে ক্লিক করুন।</p>
-                </div>
-            </div>
-            
         </section>
 
 
@@ -419,7 +318,8 @@
             <div id="detailed-records-container" class="space-y-1 bg-gray-50 p-2 rounded-lg">
                 </div>
         </section>
-        
+
+
         <section id="unique-animals-view" class="p-6 bg-white rounded-xl container-card hidden">
             <button id="back-to-home-from-unique" class="flex items-center text-farm-dark hover:text-farm-green mb-4 text-sm font-medium transition duration-150">
                 <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -460,7 +360,7 @@
     </nav>
 
     <script>
-        // Dhap 2: Service Worker Registration Added
+        // --- PWA Service Worker Registration ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
@@ -508,7 +408,7 @@
         const fileInput = document.getElementById('file-input');
         
         // Delete All Button
-        const deleteAllButton = document.getElementById('delete-all-button'); // NEW
+        const deleteAllButton = document.getElementById('delete-all-button'); 
 
         // Search Elements
         const searchInput = document.getElementById('search-input'); 
@@ -524,6 +424,7 @@
         const dataManagementSection = document.getElementById('data-management');
         const addRecordSection = document.getElementById('add-record');
         const homeSearchView = document.getElementById('home-search-view'); 
+        const searchResultsView = document.getElementById('search-results-view');
         const detailedHistoryView = document.getElementById('detailed-history-view');
         const detailedRecordsContainer = document.getElementById('detailed-records-container');
         const detailedHistoryTitle = document.getElementById('detailed-history-title');
@@ -542,16 +443,40 @@
         const navNewEntry = document.getElementById('nav-new-entry');
         const navBackup = document.getElementById('nav-backup');
         const navTodayEntries = document.getElementById('nav-today-entries');
-
+        
+        
         // --- Core Functions ---
 
+        // NEW: Sanitization Function
+        const sanitizeHTML = (str) => {
+             const temp = document.createElement('div');
+             temp.textContent = str;
+             return temp.innerHTML;
+         };
+
+
+        // 🔄 Load Records function (Only Local Storage)
         const loadRecords = () => {
             const data = localStorage.getItem(STORAGE_KEY);
             return data ? JSON.parse(data) : [];
         };
 
+        // 🔄 Save Records function to sync with Firebase
         const saveRecords = (records) => {
+            // 1. লোকাল স্টোরেজে সংরক্ষণ (অফলাইন ক্ষমতা)
             localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+
+            // 2. Firebase-এ সিঙ্ক (অনলাইন ব্যাকআপ)
+            FIREBASE_DB_REF.set(records)
+                .then(() => {
+                    console.log("Firebase sync successful.");
+                    showMessage('✅ রেকর্ড সফলভাবে ক্লাউডে সিঙ্ক হয়েছে।', 'success');
+                })
+                .catch((error) => {
+                    console.error("Firebase সেভ ত্রুটি:", error);
+                    showMessage('⚠️ ক্লাউডে ডেটা সিঙ্ক করা যায়নি। লোকালি সেভ করা হয়েছে।', 'error');
+                });
+
             updateTodayEntriesCount(); 
             renderDashboard(); 
         };
@@ -635,16 +560,24 @@
             // 4. Last Entry Date/Time
             if (records.length > 0) {
                 const newestRecord = records.reduce((latest, current) => {
-                    return (new Date(current.timestamp) > new Date(latest.timestamp)) ? current : latest;
+                    // Check for timestamp, fallback to date if timestamp is missing (for imported records)
+                    const latestTimestamp = new Date(latest.timestamp || latest.date);
+                    const currentTimestamp = new Date(current.timestamp || current.date);
+                    return (currentTimestamp > latestTimestamp) ? current : latest;
                 }, records[0]); 
 
-                const fullDate = new Date(newestRecord.timestamp);
+                const fullDate = new Date(newestRecord.timestamp || newestRecord.date);
                 const datePart = newestRecord.date; 
-                const timePart = fullDate.toLocaleTimeString('bn-BD', { 
-                    hour: '2-digit', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
+                
+                // Safety check for timePart if timestamp is not available
+                let timePart = 'N/A';
+                if (newestRecord.timestamp) {
+                     timePart = fullDate.toLocaleTimeString('bn-BD', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true 
+                    });
+                }
                 
                 statLastEntryDate.textContent = `${datePart} ${timePart}`;
             } else {
@@ -708,18 +641,19 @@
                     hour12: true 
                 });
 
-                const treatmentDetails = record.treatment;
+                // Use sanitized data for display
+                const treatmentDetails = sanitizeHTML(record.treatment);
 
                 recordDiv.innerHTML = `
                     <div class="flex justify-between items-center cursor-pointer toggle-details" data-id="${record.id}">
                         <p class="text-sm font-semibold text-farm-dark">
-                            Animal ID: ${record.animalId} | লাইন ${record.lineNumber} | ${timePart} | <span class="text-farm-red font-bold">${record.disease}</span>
+                            Animal ID: ${record.animalId} | লাইন ${record.lineNumber} | ${timePart} | <span class="text-farm-red font-bold">${sanitizeHTML(record.disease)}</span>
                         </p>
                         <svg class="w-4 h-4 text-farm-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
 
                     <div id="details-${record.id}" class="hidden mt-2 p-3 bg-gray-50 border-l-4 border-farm-orange">
-                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${record.disease}</span></p>
+                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${sanitizeHTML(record.disease)}</span></p>
                         <p class="text-xs font-medium text-gray-700 mt-1">পূর্ণ চিকিৎসা: <span class="italic">${treatmentDetails.replace(/\n/g, '<br>')}</span></p>
                          <div class="flex justify-between items-center mt-3">
                             <p class="text-xs text-gray-400 italic">রেকর্ড ID: ${record.id}</p>
@@ -853,9 +787,9 @@
             // Include all sections in the hide/show logic
             [dashboardView, dataManagementSection, addRecordSection, homeSearchView, searchResultsView, detailedHistoryView, todayRecordsView, uniqueAnimalsView].forEach(section => {
                 if (section) {
+                    // Dashboard is visible with home-search-view or on its own
                     if (section.id === 'dashboard-view') {
-                        // Dashboard is visible with home-search-view or on its own
-                        section.classList.toggle('hidden', activeViewId !== 'home-search-view' && activeViewId !== 'dashboard-view');
+                         section.classList.toggle('hidden', activeViewId !== 'home-search-view' && activeViewId !== 'dashboard-view');
                     } else {
                         section.classList.toggle('hidden', section.id !== activeViewId);
                     }
@@ -884,8 +818,12 @@
             form.reset(); 
             switchView('add-record');
         });
-        navBackup.addEventListener('click', () => switchView('data-management'));
-        navTodayEntries.addEventListener('click', displayTodayEntries); 
+        navBackup.addEventListener('click', () => {
+            switchView('data-management')
+        });
+        navTodayEntries.addEventListener('click', () => {
+            displayTodayEntries();
+        });
         backToHomeFromToday.addEventListener('click', () => switchView('home-search-view')); 
         
         // Back to home from Unique Animals View
@@ -921,8 +859,9 @@
                 animalId: parsedAnimalId.toString(), 
                 lineNumber: parsedLineNumber.toString(), 
                 date: checkupDate,
-                disease: diseaseName,
-                treatment: treatment,
+                // Use sanitized data for storage
+                disease: sanitizeHTML(diseaseName),
+                treatment: sanitizeHTML(treatment),
                 timestamp: new Date().toISOString()
             };
 
@@ -1059,19 +998,23 @@
                     hour12: true 
                 });
 
-                const treatmentShort = record.treatment.split(/\s+/)[0] || 'N/A';
-                const treatmentDetails = record.treatment;
+                // Use sanitized data for display
+                const diseaseSanitized = sanitizeHTML(record.disease);
+                const treatmentSanitized = sanitizeHTML(record.treatment);
+
+                const treatmentShort = treatmentSanitized.split(/\s+/)[0] || 'N/A';
+                const treatmentDetails = treatmentSanitized;
 
                 recordDiv.innerHTML = `
                     <div class="flex justify-between items-center cursor-pointer toggle-details" data-id="${record.id}">
                         <p class="text-sm font-semibold text-farm-dark">
-                            লাইন ${record.lineNumber} | ${datePart} ${timePart} | <span class="text-farm-red font-bold">${record.disease}</span> | <span class="text-farm-green">${treatmentShort}</span>
+                            লাইন ${record.lineNumber} | ${datePart} ${timePart} | <span class="text-farm-red font-bold">${diseaseSanitized}</span> | <span class="text-farm-green">${treatmentShort}</span>
                         </p>
                         <svg class="w-4 h-4 text-farm-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
 
                     <div id="details-${record.id}" class="hidden mt-2 p-3 bg-gray-50 border-l-4 border-farm-orange">
-                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${record.disease}</span></p>
+                        <p class="text-xs font-medium text-gray-700">রোগের নাম: <span class="font-bold">${diseaseSanitized}</span></p>
                         <p class="text-xs font-medium text-gray-700 mt-1">পূর্ণ চিকিৎসা: <span class="italic">${treatmentDetails.replace(/\n/g, '<br>')}</span></p>
                          <div class="flex justify-between items-center mt-3">
                             <p class="text-xs text-gray-400 italic">রেকর্ড ID: ${record.id}</p>
@@ -1166,7 +1109,7 @@
             if (confirm('🚨 অত্যন্ত গুরুত্বপূর্ণ সতর্কতা! 🚨 আপনি কি নিশ্চিত যে ফার্মের সমস্ত স্বাস্থ্য রেকর্ড (মোট ' + records.length + ' টি) চিরতরে মুছে ফেলতে চান? এই অ্যাকশনটি ফিরিয়ে আনা যাবে না।')) {
                 if (prompt('নিশ্চিত করতে "DELETE" শব্দটি ইংরেজিতে লিখুন: ') === 'DELETE') {
                     localStorage.removeItem(STORAGE_KEY);
-                    saveRecords([]); // Ensure empty array is saved and dashboard is updated
+                    saveRecords([]); // Ensure empty array is saved and dashboard is updated in both local/firebase
                     showMessage('✅ সফলভাবে সমস্ত রেকর্ড মুছে ফেলা হয়েছে।', 'success');
                     
                     // Switch back to the home screen after deletion
@@ -1338,7 +1281,8 @@
                                      value = parseInt(value).toString(); 
                                 }
                                 
-                                record[key] = value;
+                                // Sanitize imported data
+                                record[key] = sanitizeHTML(value);
                             });
                             
                             if (record.animalId && record.date && record.lineNumber) {
@@ -1385,14 +1329,47 @@
 
         // Event Listener for Delete All
         deleteAllButton.addEventListener('click', deleteAllRecords);
+        
+        
+        // --- Database Listener (Simplified for Fixed Admin ID) ---
+        
+        const initializeDatabaseListener = () => {
+             // 1. Firebase Listener
+            FIREBASE_DB_REF.on('value', (snapshot) => {
+                const firebaseRecords = snapshot.val() || [];
+                const localRecords = loadRecords();
+                
+                // 2. ডেটা মার্জিং লজিক
+                if (firebaseRecords.length > 0) {
+                    // Firebase-এ ডেটা আছে, তাই সেটিই মাস্টার ডেটা। 
+                    if (JSON.stringify(localRecords) !== JSON.stringify(firebaseRecords)) {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(firebaseRecords));
+                        console.log("Local storage updated from Firebase (Fixed ID sync).");
+                    }
+                } else if (localRecords.length > 0) {
+                    // Firebase খালি কিন্তু লোকাল স্টোরেজে ডেটা আছে, তাই লোকাল ডেটা Firebase-এ আপলোড করুন।
+                     FIREBASE_DB_REF.set(localRecords)
+                        .then(() => console.log("Local data uploaded to Firebase (Fixed ID backup)."))
+                        .catch(err => console.error("Error uploading local data:", err));
+                }
 
+                renderDashboard();
+                switchView('home-search-view'); 
+            }, (error) => {
+                console.error("Firebase read failed (You might be offline):", error);
+                showMessage('⚠️ অফলাইন মোড: ক্লাউড থেকে ডেটা লোড করা যায়নি। লোকাল ডেটা ব্যবহার করা হচ্ছে।', 'error');
+                renderDashboard();
+                switchView('home-search-view');
+            });
+        };
 
-        // --- Initialization ---
+        // --- Final Initialization (on DOM Load) ---
         document.addEventListener('DOMContentLoaded', () => {
-            switchView('home-search-view');
             // Set today's date in the checkup date field on load
             document.getElementById('checkup-date').value = new Date().toISOString().split('T')[0];
-            renderDashboard(); 
+            
+            // Start the database listener (since no login is required)
+            initializeDatabaseListener();
         });
 
     </script>
